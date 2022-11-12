@@ -68,10 +68,10 @@ cf3006e8186f805ea13f07dc593b5f34
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
         MainForm mainForm = new MainForm();
-        mainForm.setContentPane(mainForm.mainPanel);
-        mainForm.setTitle("සිරා Weather");
-        mainForm.setSize(400,700);
-        mainForm.setVisible(true);
+        //mainForm.setContentPane(mainForm.mainPanel);
+        //mainForm.setTitle("සිරා Weather");
+        //mainForm.setSize(400,700);
+        //mainForm.setVisible(true);
         long start = System.currentTimeMillis();
         Thread.sleep(20000);
         String jdbcUrl= "jdbc:sqlite:/Users/shiransilva/Repos/Aca/ConcordiaAPPProject/APP_Projact.db";
@@ -174,7 +174,7 @@ public class Main {
             JSONObject jobj = (JSONObject)parse.parse(inline);
             JSONObject jobjLocation = (JSONObject)jobj.get("location");
             JSONObject jobjCurrent = (JSONObject)jobj.get("current");
-
+            /*
             Location location = new Location(jobjLocation);
             String LocationExistName= location.handleSelectLocation(location.getName()).getName();
             if(LocationExistName ==""){
@@ -190,7 +190,7 @@ public class Main {
             System.out.println(jobj.toJSONString());
             //JSONObject obj = new JSONObject(response);
 
-            System.out.println(jobj.get("location"));
+            System.out.println(jobj.get("location"));*/
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (NoSuchAlgorithmException e) {
@@ -199,12 +199,6 @@ public class Main {
             throw new RuntimeException(e);
         } catch (ParseException e) {
             throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
-
-
-        //System.out.println("Hello world!");
-
     }
 }

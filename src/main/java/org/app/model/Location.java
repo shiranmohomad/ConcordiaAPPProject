@@ -17,20 +17,31 @@ public class Location {
     private String localtime_epoch = "";
     private String utc_offset = "";
 
+    private Weather weatherObj;
+
     private Connection jdbcConnection = JDBC.getInstance();
 
     public Location() throws SQLException {
         //createtable();
     }
-    public Location(JSONObject jsonObj) throws SQLException {
-        name = jsonObj.get("name").toString();
-        country = jsonObj.get("country").toString();
-        region = jsonObj.get("region").toString();
-        timezone_id = jsonObj.get("timezone_id").toString();
-        localtime_epoch = jsonObj.get("localtime_epoch").toString();
-        utc_offset = jsonObj.get("utc_offset").toString();
+    public Location(JSONObject jsonLocationObj,JSONObject jsonWeatherObj) throws SQLException {
+        name = jsonLocationObj.get("name").toString();
+        country = jsonLocationObj.get("country").toString();
+        region = jsonLocationObj.get("region").toString();
+        timezone_id = jsonLocationObj.get("timezone_id").toString();
+        localtime_epoch = jsonLocationObj.get("localtime_epoch").toString();
+        utc_offset = jsonLocationObj.get("utc_offset").toString();
+        weatherObj = new Weather(jsonWeatherObj,jsonLocationObj.get("name").toString());
         System.out.println("name:"+name);
         //createtable();
+    }
+
+    public Weather getWeatherObj() {
+        return weatherObj;
+    }
+
+    public void setWeatherObj(Weather weatherObj) {
+        this.weatherObj = weatherObj;
     }
 
     public void setName(String name) {
