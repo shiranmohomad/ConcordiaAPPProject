@@ -5,7 +5,7 @@ import org.app.model.Weather;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
+import javax.swing.JOptionPane;
 import javax.net.ssl.*;
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 public class MainForm extends JFrame{
@@ -29,9 +30,8 @@ public class MainForm extends JFrame{
     Container con;
     JPanel textPanel,inputPanel,disPlayPanel;
     JLabel textLabel,displayLabel,displayLabelTemp,displayLabelobservation_time,displayLabelweather_icons,
-            displayLabelweather_descriptions,displayLabelwind_speed
-            ,displayLabelwind_degree,displayLabelwind_dir,displayLabelpressure,
-            displayLabelprecip,displayLabelhumidity,displayLabelcloudcover,displayLabelfeelslike,
+            displayLabelweather_descriptions,displayLabelwind_speed,displayLabelwind_degree,displayLabelwind_dir,
+            displayLabelpressure, displayLabelprecip,displayLabelhumidity,displayLabelcloudcover,displayLabelfeelslike,
             displayLabeluv_index,displayLabelvisibility,displayLabelis_day,displayLabellocation;
     JTextField jtf;
     JButton enterB;
@@ -39,15 +39,122 @@ public class MainForm extends JFrame{
     Font normalFontCountry = new Font("Times New Roman",Font.PLAIN,20);
     Font normalFontTemp = new Font("Times New Roman",Font.PLAIN,40);
     JScrollPane scrPane;
-//https://www.google.com/search?q=night&sxsrf=ALiCzsakoi6cjc7pROEh5LP0R3NnBCfbxA:1668192928963&source=lnms&tbm=isch&sa=X&ved=2ahUKEwj3-8n35qb7AhUzjokEHercCxUQ_AUoAXoECAIQAw&biw=1512&bih=866&dpr=2#imgrc=kV50N2Q-eEP4FM
-
-    /*public void paintComponent(Graphics g,Image img) {
-        super.paintComponents(g);
-        //paintComponent(g);
-        g.drawImage(img, 0, 0, null);
-    }*/
 
     int sublocationY = 100;
+
+    public MainForm() throws SQLException {
+        Image img = Toolkit.getDefaultToolkit().getImage("https://www.google.com/search?q=night&sxsrf=ALiCzsakoi6cjc7pROEh5LP0R3NnBCfbxA:1668192928963&source=lnms&tbm=isch&sa=X&ved=2ahUKEwj3-8n35qb7AhUzjokEHercCxUQ_AUoAXoECAIQAw&biw=1512&bih=866&dpr=2#imgrc=kV50N2Q-eEP4FM");
+        //Image img = Toolkit.getDefaultToolkit().getImage("/Users/shiransilva/Repos/Aca/ConcordiaAPPProject/src/main/resources/night.jpeg");
+        window= new JFrame();
+        window.setSize(800,700);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.getContentPane().setBackground(Color.BLACK);
+        //JImageComponent ic = new JImageComponent(myImageGoesHere);
+        //imagePanel.add(ic);
+        window.add(new JLabel(new ImageIcon("Path/To/Your/Image.png")));
+
+        //window.getContentPane()
+        window.setTitle("සිරා Weather");
+        window.setLayout(null);
+        /*this.setContentPane(new JPanel() {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(img, 0, 0, null);
+            }
+        });*/
+        con=window.getContentPane();
+
+        disPlayPanel = new JPanel();
+        scrPane = new JScrollPane(disPlayPanel);
+        disPlayPanel.setBounds(1,100,800,100);
+        disPlayPanel.setBackground(Color.BLACK);
+        displayLabelTemp = new JLabel("");
+        displayLabelTemp.setForeground(Color.white);
+        displayLabelTemp.setFont(normalFontTemp);
+        //displayLabelTemp.setBounds(1,200,1000,100);
+        //displayLabelTemp.setFontSize(30);
+        disPlayPanel.add(displayLabelTemp);
+        con.add(disPlayPanel);
+
+        textPanel= new JPanel();
+        textPanel.setBounds(1,1,500,50);
+        textPanel.setBackground(Color.BLACK);
+        textLabel = new JLabel("Search a city to check weather");
+        textLabel.setForeground(Color.white);
+        textLabel.setFont(normalFont);
+        textPanel.add(textLabel);
+        con.add(textPanel);
+        //JPanel dynamic = createsubLocation();
+        //con.add(dynamic);
+        inputPanel = new JPanel();
+        inputPanel.setBounds(450,1,300,50);
+        inputPanel.setBackground(Color.BLACK);
+        inputPanel.setLayout(new GridLayout(1,2));
+
+        jtf =new JTextField();
+        inputPanel.add(jtf);
+
+        enterB=new JButton("Find");
+        enterB.setBackground(Color.BLACK);
+        enterB.setForeground(Color.BLACK);
+        inputPanel.add(enterB);
+        con.add(inputPanel);
+        window.setVisible(true);
+        enterB.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String city = jtf.getText().toString().trim();
+                System.out.println("city : "+city);
+                Location locationCurrent = null;
+                try {
+                    locationCurrent = invokeApi(city);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if(locationCurrent!=null){
+                    JPanel dynamic = null;
+                    try {
+                        dynamic = createsubLocation(locationCurrent);
+                        //Location location = new Location(jobjLocation);
+                        String LocationExistName= locationCurrent.handleSelectLocation(locationCurrent.getName()).getName();
+                        if(LocationExistName ==""){
+                            locationCurrent.handleInsert();
+                        }
+                        //boolean ifLocationExist = ;
+                        Weather weather =new Weather(locationCurrent.getWeatherObj(),locationCurrent.getName());
+                        weather.handleInsert();
+                        Weather weatherSelectObj = weather.handleSelectLocation(locationCurrent.getName());
+
+                    } catch (MalformedURLException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    sublocationY=sublocationY+110;
+
+                /*if (con.getComponentCount()==9){
+                    con.remove(5);
+                    sublocationY = 100;
+                }*/
+                    con.add(dynamic);
+                    //System.out.println("Con Size:"+con.getComponentCount());
+                    jtf.setText("");
+                    window.setVisible(true);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Invalid City, Please re enter the city", "InfoBox: " + "Error", JOptionPane.INFORMATION_MESSAGE);
+                    jtf.setText("");
+                }
+
+            }
+        });
+        relodLocations();
+    }
+    public static void main(String[] args) throws InterruptedException, SQLException {
+        new MainForm();
+
+    }
+
     public JPanel createsubLocation(Location location) throws MalformedURLException {
         Weather loWeather= location.getWeatherObj();
         JPanel disPlayPanelSub = new JPanel();
@@ -55,17 +162,6 @@ public class MainForm extends JFrame{
         String urlString = loWeather.getWeather_icons();
         String modifiedUrl = urlString.replaceAll("\\\\","").replace("[","").replace("]","");
         System.out.println("modifiedUrl :"+modifiedUrl);
-
-
-        //URL img = new URL(modifiedUrl);
-        //ImageIcon image = new ImageIcon(img);
-        //JLabel displayImage = new JLabel("", image, JLabel.CENTER);
-        //System.out.println("modifiedUrl :"+modifiedUrl);
-        //JPanel panel = new JPanel(new BorderLayout());
-
-
-
-
 
         JLabel displayLabelSub = new JLabel("<html>"+location.getName()+"<br/>["+location.getCountry()+"]</html>", SwingConstants.CENTER);
         //JLabel displayLabelSubLT = new JLabel("<html>Local Time"+"<br/>"+location.getLocaltime+"</html>");
@@ -125,103 +221,42 @@ public class MainForm extends JFrame{
         disPlayPanelSub.add(displayLabelSubwind_dir);
         //disPlayPanelSub.add( displayImage, BorderLayout.CENTER );
 
+        /*URL img = new URL(modifiedUrl);
+        ImageIcon image = new ImageIcon(img);
+        JLabel displayImage = new JLabel("", image, JLabel.CENTER);
+        System.out.println("modifiedUrl :"+modifiedUrl);
+        JPanel panel = new JPanel(new BorderLayout());*/
 
         disPlayPanelSub.setLayout(new GridLayout());
         //disPlayPanelSub.setBackground(Color.LIGHT_GRAY);
         return disPlayPanelSub;
     }
-    public MainForm(){
-        //Image img = Toolkit.getDefaultToolkit().getImage("https://www.google.com/search?q=night&sxsrf=ALiCzsakoi6cjc7pROEh5LP0R3NnBCfbxA:1668192928963&source=lnms&tbm=isch&sa=X&ved=2ahUKEwj3-8n35qb7AhUzjokEHercCxUQ_AUoAXoECAIQAw&biw=1512&bih=866&dpr=2#imgrc=kV50N2Q-eEP4FM");
-        Image img = Toolkit.getDefaultToolkit().getImage("/Users/shiransilva/Repos/Aca/ConcordiaAPPProject/src/main/resources/night.jpeg");
-        window= new JFrame();
-        window.setSize(800,700);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.getContentPane().setBackground(Color.BLACK);
-        //JImageComponent ic = new JImageComponent(myImageGoesHere);
-        //imagePanel.add(ic);
-        window.add(new JLabel(new ImageIcon("Path/To/Your/Image.png")));
 
-        //window.getContentPane()
-        window.setTitle("සිරා Weather");
-        window.setLayout(null);
-        /*this.setContentPane(new JPanel() {
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(img, 0, 0, null);
+    public void relodLocations() throws SQLException {
+        Location location =new Location();
+        List<Location> locationList = location.handleAllSelectLocation();
+        //System.out.println("locationList size : "+locationList.size());
+        //System.out.println(locationList.get(0).getName());
+        //System.out.println(locationList.get(1).getName());
+        for(Location l:locationList){
+            JPanel dynamic = null;
+            try {
+                //System.out.println("for each :"+l.getName().toString());
+                Location locationCurrent = invokeApi(l.getName().toString().trim().replace(" ","%20"));
+                dynamic = createsubLocation(locationCurrent);
+            } catch (MalformedURLException ex) {
+                throw new RuntimeException(ex);
             }
-        });*/
-        con=window.getContentPane();
-
-        disPlayPanel = new JPanel();
-        scrPane = new JScrollPane(disPlayPanel);
-        disPlayPanel.setBounds(1,100,800,100);
-        disPlayPanel.setBackground(Color.BLACK);
-        displayLabelTemp = new JLabel("");
-        displayLabelTemp.setForeground(Color.white);
-        displayLabelTemp.setFont(normalFontTemp);
-        //displayLabelTemp.setBounds(1,200,1000,100);
-        //displayLabelTemp.setFontSize(30);
-        disPlayPanel.add(displayLabelTemp);
-        con.add(disPlayPanel);
-
-        textPanel= new JPanel();
-        textPanel.setBounds(1,1,500,50);
-        textPanel.setBackground(Color.BLACK);
-        textLabel = new JLabel("Search a city to check weather");
-        textLabel.setForeground(Color.white);
-        textLabel.setFont(normalFont);
-        textPanel.add(textLabel);
-        con.add(textPanel);
-
-        //JPanel dynamic = createsubLocation();
-
-        //con.add(dynamic);
-        inputPanel = new JPanel();
-        inputPanel.setBounds(450,1,300,50);
-        inputPanel.setBackground(Color.BLACK);
-        inputPanel.setLayout(new GridLayout(1,2));
-
-        jtf =new JTextField();
-        inputPanel.add(jtf);
-
-        enterB=new JButton("Find");
-        enterB.setBackground(Color.BLACK);
-        enterB.setForeground(Color.BLACK);
-        inputPanel.add(enterB);
-        con.add(inputPanel);
+            sublocationY=sublocationY+110;
+            con.add(dynamic);
+        }
+        //System.out.println("Con Size:"+con.getComponentCount());
         window.setVisible(true);
-        enterB.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String city = jtf.getText().toString().trim();
-                System.out.println("city : "+city);
-                Location locationCurrent = invokeApi(city);
-                JPanel dynamic = null;
-                try {
-                    dynamic = createsubLocation(locationCurrent);
-                } catch (MalformedURLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                sublocationY=sublocationY+110;
-
-                /*if (con.getComponentCount()==9){
-                    con.remove(5);
-                    sublocationY = 100;
-                }*/
-                con.add(dynamic);
-                //System.out.println("Con Size:"+con.getComponentCount());
-                window.setVisible(true);
-            }
-        });
 
     }
-    public static void main(String[] args) throws InterruptedException {
-        new MainForm();
-
-    }
-    public Location invokeApi(String city){
+    public Location invokeApi(String city) throws SQLException {
         URL url;
-        Location location;
+        Location location=null;
         try {
             //url = new URL("https://run.mocky.io/v3/19fa89b0-d9f9-4a82-8f95-0a9048d3a4af");
             //url = new URL("https://radio-world-50-000-radios-stations.p.rapidapi.com/v1/radios/getTopByCountry/{query:'fr'}");
@@ -274,32 +309,18 @@ public class MainForm extends JFrame{
                 }
                 scanner.close();
                 System.out.println(response);
+                JSONParser parse = new JSONParser();
+                JSONObject jobj = (JSONObject)parse.parse(inline);
+                JSONObject jobjLocation = (JSONObject)jobj.get("location");
+                JSONObject jobjCurrent = (JSONObject)jobj.get("current");
+
+                if(jobjLocation!=null && jobjCurrent!=null){
+                    location = new Location(jobjLocation,jobjCurrent);
+                }
             }
             else
                 System.out.println("Error :"+conn.getResponseMessage());
-            JSONParser parse = new JSONParser();
-            JSONObject jobj = (JSONObject)parse.parse(inline);
-            JSONObject jobjLocation = (JSONObject)jobj.get("location");
-            JSONObject jobjCurrent = (JSONObject)jobj.get("current");
 
-            location = new Location(jobjLocation,jobjCurrent);
-            /*String LocationExistName= location.handleSelectLocation(location.getName()).getName();
-            if(LocationExistName ==""){
-                location.handleInsert();
-            }
-            //boolean ifLocationExist = ;
-            Weather weather =new Weather(jobjCurrent,location.getName());
-            weather.handleInsert();
-            Weather weatherSelectObj = weather.handleSelectLocation(location.getName());
-            System.out.println(weatherSelectObj.getTemperature());
-
-            System.out.println(jobjLocation.get("localtime"));
-            //textLabel.setText(jobj.get("location").toString());
-            displayLabelTemp.setText(weatherSelectObj.getTemperature()+"° C");
-            System.out.println(jobj.toJSONString());
-            //JSONObject obj = new JSONObject(response);
-
-            System.out.println(jobj.get("location"));*/
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (NoSuchAlgorithmException e) {

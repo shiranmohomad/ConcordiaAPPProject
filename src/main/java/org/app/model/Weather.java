@@ -27,14 +27,16 @@ public class Weather {
     private String is_day= "";
     Connection jdbcConnection = JDBC.getInstance();
 
-    public Weather(){
+    public Weather(Weather weatherObj, String name){
         /*try{
             createtable();
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }*/
     }
+    public Weather(){
 
+    }
     public Weather(JSONObject jsonObj, String locationP){
         observation_time = jsonObj.get("observation_time").toString();
         temperature = jsonObj.get("temperature").toString();

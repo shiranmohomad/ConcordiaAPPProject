@@ -2,10 +2,15 @@ package org.app.model;
 
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
+import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Location {
@@ -121,6 +126,30 @@ public class Location {
             //System.out.println("Name :"+Name +": SIN : "+SIN);
         }
         return locationObj;
+    }
+    public List<Location> handleAllSelectLocation() throws SQLException {
+        String query = "SELECT * FROM Location;";
+        Statement statement= jdbcConnection.createStatement();
+        ResultSet results = statement.executeQuery(query);
+        //System.out.println(results.toString());
+
+        List<Location> locationList=new ArrayList<Location>();
+        while(results.next()){
+            Location locationObj= new Location();
+            System.out.println("results.next()"+results.getString("name"));
+            locationObj.setName(results.getString("name"));
+            locationObj.setCountry(results.getString("country"));
+            locationObj.setRegion(results.getString("region"));
+            locationObj.setTimezone_id(results.getString("timezone_id"));
+            locationObj.setLocaltime_epoch(results.getString("localtime_epoch"));
+            locationObj.setUtc_offset(results.getString("utc_offset"));
+            //System.out.println(locationObj.toString());
+            locationList.add(locationObj);
+        }
+        for(int i=0;i<locationList.size();i++){
+            System.out.println("Method :"+locationList.get(i).getName().toString());
+        }
+        return locationList;
     }
 
     public void handleInsert(Location locationObj){
