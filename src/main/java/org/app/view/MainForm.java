@@ -229,6 +229,7 @@ public class MainForm extends JFrame{
 
         disPlayPanelSub.setLayout(new GridLayout());
         //disPlayPanelSub.setBackground(Color.LIGHT_GRAY);
+        //disPlayPanelSub.getComponent(0);
         return disPlayPanelSub;
     }
 
