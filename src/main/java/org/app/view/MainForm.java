@@ -105,9 +105,15 @@ public class MainForm extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 String city = jtf.getText().toString().trim();
                 System.out.println("city : "+city);
+                Location location;
+                try {
+                    location=new Location();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 Location locationCurrent = null;
                 try {
-                    locationCurrent = invokeApi(city);
+                    locationCurrent = location.invokeApi(city);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -119,10 +125,11 @@ public class MainForm extends JFrame{
                         String LocationExistName= locationCurrent.handleSelectLocation(locationCurrent.getName()).getName();
                         if(LocationExistName ==""){
                             locationCurrent.handleInsert();
+                            locationCurrent.getWeatherObj().handleInsert();
                         }
                         //boolean ifLocationExist = ;
                         Weather weather =new Weather(locationCurrent.getWeatherObj(),locationCurrent.getName());
-                        weather.handleInsert();
+                        //weather.handleInsert();
                         Weather weatherSelectObj = weather.handleSelectLocation(locationCurrent.getName());
 
                     } catch (MalformedURLException ex) {
@@ -243,7 +250,7 @@ public class MainForm extends JFrame{
             JPanel dynamic = null;
             try {
                 //System.out.println("for each :"+l.getName().toString());
-                Location locationCurrent = invokeApi(l.getName().toString().trim().replace(" ","%20"));
+                Location locationCurrent = location.invokeApi(l.getName().toString().trim().replace(" ","%20"));
                 dynamic = createsubLocation(locationCurrent);
             } catch (MalformedURLException ex) {
                 throw new RuntimeException(ex);
@@ -255,88 +262,5 @@ public class MainForm extends JFrame{
         window.setVisible(true);
 
     }
-    public Location invokeApi(String city) throws SQLException {
-        URL url;
-        Location location=null;
-        try {
-            //url = new URL("https://run.mocky.io/v3/19fa89b0-d9f9-4a82-8f95-0a9048d3a4af");
-            //url = new URL("https://radio-world-50-000-radios-stations.p.rapidapi.com/v1/radios/getTopByCountry/{query:'fr'}");
-            //url = new URL("https://api.geekflare.com/dnsrecord");
 
-            TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            }
-            };
-
-            // Install the all-trusting trust manager
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-            // Create all-trusting host name verifier
-            HostnameVerifier allHostsValid = new HostnameVerifier() {
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            };
-
-            // Install the all-trusting host verifier
-            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-            //url = new URL("http://api.weatherstack.com/current?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city);
-            url = new URL("https://run.mocky.io/v3/10758310-05ab-4338-bed7-28392f1b9d30"+"?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("access_key","cf3006e8186f805ea13f07dc593b5f34");
-            conn.setRequestProperty("accept","application/json");
-            conn.setRequestMethod("GET");
-            conn.connect();
-            int responseCode= conn.getResponseCode();
-            System.out.println("responseCode :"+responseCode);
-            System.out.println("responseMessage :"+conn.getContent());
-            StringBuilder response=new StringBuilder();
-            String inline="";
-            if(responseCode==200){
-                System.out.println(conn.getResponseMessage());
-
-                Scanner scanner=new Scanner(url.openStream());
-                while(scanner.hasNext()){
-                    inline+=scanner.nextLine();
-                    //response.append(scanner.nextLine());
-                }
-                scanner.close();
-                System.out.println(response);
-                JSONParser parse = new JSONParser();
-                JSONObject jobj = (JSONObject)parse.parse(inline);
-                JSONObject jobjLocation = (JSONObject)jobj.get("location");
-                JSONObject jobjCurrent = (JSONObject)jobj.get("current");
-
-                if(jobjLocation!=null && jobjCurrent!=null){
-                    location = new Location(jobjLocation,jobjCurrent);
-                }
-            }
-            else
-                System.out.println("Error :"+conn.getResponseMessage());
-
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return location;
-    }
 }

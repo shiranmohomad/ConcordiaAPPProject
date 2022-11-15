@@ -38,11 +38,4 @@ class MainFormTest {
         //System.out.println("Testing createsubLocation :"+testJpanel.getComponent(0).getName());
         Assertions.assertEquals(JLabel.class,testJpanel.getComponent(0).getClass());
     }
-
-    @Test
-    void invokeApi() throws SQLException {
-        MainForm mainFormTest = new MainForm();
-        Location testLocation = mainFormTest.invokeApi("New%20York");
-        Assertions.assertEquals("New York",testLocation.getName());
-    }
 }

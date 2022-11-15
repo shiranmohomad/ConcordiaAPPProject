@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 public class JDBC {
 
-    //String jdbcUrl= ;
     private static final Connection jdbcConnection;
 
     static {
