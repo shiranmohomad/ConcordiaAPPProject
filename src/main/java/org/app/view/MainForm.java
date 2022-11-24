@@ -139,10 +139,25 @@ public class MainForm extends JFrame{
                     }
                     sublocationY=sublocationY+110;
 
-                /*if (con.getComponentCount()==9){
-                    con.remove(5);
+                if (sublocationY==650){
+                    //con.remove(5);
+                    /*con.removeAll();
+                    window.remove(con);
+                    try {
+                        relodLocations();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     sublocationY = 100;
-                }*/
+                    window.setVisible(false);*/
+                    try {
+                        MainForm newWindo= new MainForm();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+
+                }
                     con.add(dynamic);
                     //System.out.println("Con Size:"+con.getComponentCount());
                     jtf.setText("");
@@ -179,11 +194,8 @@ public class MainForm extends JFrame{
         JLabel displayLabelSubwind_speed = new JLabel("<html>Wind Speed<br/>&nbsp;&nbsp;&nbsp;"+loWeather.getWind_speed()+"</html>", SwingConstants.CENTER);
         JLabel displayLabelSubwind_dir = new JLabel("<html>Direction<br/>&nbsp;&nbsp;&nbsp;"+loWeather.getWind_dir()+"</html>", SwingConstants.CENTER);
 
-
-
         disPlayPanelSub.setBounds(5,sublocationY,790,100);
         disPlayPanelSub.setBackground(Color.DARK_GRAY);
-
 
         displayLabelSub.setForeground(Color.white);
         displayLabelSub.setFont(normalFontCountry);

@@ -116,9 +116,10 @@ public class Location {
         statement.execute(query);
     }
 
-    public void handleUpdateLocaltime_epoch(){
+    public void handleUpdateLocaltime_epoch() throws SQLException {
         String query = "UPDATE Weather SET localtime_epoch='"+localtime_epoch+"' WHERE name='"+name+"';";
-
+        Statement statement= jdbcConnection.createStatement();
+        statement.execute(query);
     }
     public Location handleSelectLocation(String locationName) throws SQLException {
         String query = "SELECT * FROM Location WHERE name='"+locationName+"';";
@@ -139,7 +140,7 @@ public class Location {
         return locationObj;
     }
     public List<Location> handleAllSelectLocation() throws SQLException {
-        String query = "SELECT * FROM Location;";
+        String query = "SELECT * FROM Location LIMIT 5;";
         Statement statement= jdbcConnection.createStatement();
         ResultSet results = statement.executeQuery(query);
         //System.out.println(results.toString());
@@ -175,6 +176,12 @@ public class Location {
 
         Statement statement= jdbcConnection.createStatement();
         ResultSet results = statement.executeQuery(query);
+    }
+
+    public void deleteLocation(String locationName) throws SQLException {
+        String query = "DELETE FROM Location WHERE name='"+locationName+"'";
+        Statement statement= jdbcConnection.createStatement();
+        statement.execute(query);
     }
     public Location invokeApi(String city) throws SQLException {
         URL url;
