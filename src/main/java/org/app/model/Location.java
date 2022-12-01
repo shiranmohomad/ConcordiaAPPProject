@@ -35,7 +35,7 @@ public class Location {
 
     private Weather weatherObj;
 
-    private Connection jdbcConnection = JDBC.getInstance();
+    private final Connection jdbcConnection = JDBC.getInstance();
 
     public Location() throws SQLException {
         //createtable();
@@ -159,7 +159,7 @@ public class Location {
             locationList.add(locationObj);
         }
         for(int i=0;i<locationList.size();i++){
-            System.out.println("Method :"+locationList.get(i).getName().toString());
+            System.out.println("Method :"+ locationList.get(i).getName());
         }
         return locationList;
     }
@@ -216,8 +216,8 @@ public class Location {
 
             // Install the all-trusting host verifier
             HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-            url = new URL("http://api.weatherstack.com/current?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city);
-            //url = new URL("https://run.mocky.io/v3/10758310-05ab-4338-bed7-28392f1b9d30"+"?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city);
+            //url = new URL("http://api.weatherstack.com/current?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city.replace(" ","%20"));
+            url = new URL("https://run.mocky.io/v3/10758310-05ab-4338-bed7-28392f1b9d30"+"?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("access_key","cf3006e8186f805ea13f07dc593b5f34");
             conn.setRequestProperty("accept","application/json");
@@ -237,7 +237,7 @@ public class Location {
                     //response.append(scanner.nextLine());
                 }
                 scanner.close();
-                System.out.println(response);
+                System.out.println("API Response :"+inline);
                 JSONParser parse = new JSONParser();
                 JSONObject jobj = (JSONObject)parse.parse(inline);
                 JSONObject jobjLocation = (JSONObject)jobj.get("location");

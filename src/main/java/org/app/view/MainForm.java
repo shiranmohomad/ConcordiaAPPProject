@@ -11,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -26,6 +28,9 @@ import java.util.Scanner;
 
 public class MainForm extends JFrame{
     public JPanel mainPanel;
+
+    boolean hasclicked1=false;
+    JLabel click1label=null;
     JFrame window;
     Container con;
     JPanel textPanel,inputPanel,disPlayPanel;
@@ -137,30 +142,30 @@ public class MainForm extends JFrame{
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }
-                    sublocationY=sublocationY+110;
-
-                if (sublocationY==650){
-                    //con.remove(5);
-                    /*con.removeAll();
-                    window.remove(con);
-                    try {
-                        relodLocations();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
+                    if (sublocationY>540){
+                        //con.remove(5);
+                        /*con.removeAll();
+                        window.remove(con);
+                        try {
+                            relodLocations();
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        sublocationY = 100;*/
+                        //window.setVisible(false);
+                        /*try {
+                            sublocationY = 100;
+                            MainForm newWindo= new MainForm();
+                            newWindo.sublocationY=100;
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }*/
+                        sublocationY = 100;
                     }
-                    sublocationY = 100;
-                    window.setVisible(false);*/
-                    try {
-                        MainForm newWindo= new MainForm();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-
-
-                }
+                    else
+                        sublocationY=sublocationY+110;
                     con.add(dynamic);
-                    //System.out.println("Con Size:"+con.getComponentCount());
-                    jtf.setText("");
+                    //System.out.println("Con Size:"+con.getComponentCount());jtf.setText("");
                     window.setVisible(true);
                 }
                 else{
@@ -249,9 +254,69 @@ public class MainForm extends JFrame{
         disPlayPanelSub.setLayout(new GridLayout());
         //disPlayPanelSub.setBackground(Color.LIGHT_GRAY);
         //disPlayPanelSub.getComponent(0);
+
+        disPlayPanelSub.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                displayLabelSub.setBackground(Color.CYAN);
+                window.setVisible(true);
+                int returnVal = JOptionPane.showConfirmDialog(null, "Delete "+location.getName()+" ?", "Warning!", JOptionPane.INFORMATION_MESSAGE);
+                try{
+                    if (returnVal == JOptionPane.YES_OPTION) {
+                        returnVal=0;
+                        location.deleteLocation(location.getName());
+                        JOptionPane.showMessageDialog(null, "Deleted");
+                        window.setVisible(false);
+                        System.out.println(location.getName());
+                        window.remove(disPlayPanelSub);
+                        //window.remove(disPlayPanelSub);
+                        window.setVisible(true);
+                        //ainForm newWindo= new MainForm();
+
+                    }
+                    else if (returnVal == JOptionPane.NO_OPTION)
+                        JOptionPane.showMessageDialog(null, "Not Deleted");
+                    else
+                        JOptionPane.showMessageDialog(null, "cancelled");
+                }catch (Exception ex){
+
+                }
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+        //click1label.setBackground(Color.CYAN);
         return disPlayPanelSub;
     }
 
+    public void mouseClicked(MouseEvent me) {
+        if (!hasclicked1) { //clicked first pic
+            hasclicked1 = true;
+            click1label = (JLabel) me.getSource();
+        } else { //clicked second pic
+            hasclicked1 = false;
+
+        }
+    }
     public void relodLocations() throws SQLException {
         Location location =new Location();
         List<Location> locationList = location.handleAllSelectLocation();
