@@ -216,8 +216,8 @@ public class Location {
 
             // Install the all-trusting host verifier
             HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-            //url = new URL("http://api.weatherstack.com/current?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city.replace(" ","%20"));
-            url = new URL("https://run.mocky.io/v3/10758310-05ab-4338-bed7-28392f1b9d30"+"?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city);
+            url = new URL("http://api.weatherstack.com/current?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city.replace(" ","%20"));
+            //url = new URL("https://run.mocky.io/v3/10758310-05ab-4338-bed7-28392f1b9d30"+"?access_key=cf3006e8186f805ea13f07dc593b5f34&query="+city);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("access_key","cf3006e8186f805ea13f07dc593b5f34");
             conn.setRequestProperty("accept","application/json");
